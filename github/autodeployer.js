@@ -60,7 +60,8 @@ const verifySignature = (req, secret) => {
                 console.log(`${ cachedRoute.name } - Push incoming...`)
                 if (cachedRoute.isServer) {
                     const tmuxName = cachedRoute.name.replace('.', '_')
-                    if (tmuxSessions[cachedRoute.handler]) {
+                    console.log(tmuxSessions[cachedRoute.handler])
+                    if ('does session exists?', tmuxSessions[cachedRoute.handler]) {
                         exec(`tmux kill-session -t ${ tmuxName }`, (err, stdout, stderr) => {
                             if (err) throw err
                             if (stderr) return console.error('stderr', stderr)
