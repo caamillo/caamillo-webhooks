@@ -18,8 +18,8 @@ const verifySignature = (req, secret) => {
         .digest('hex')
     const trusted = Buffer.from(`sha256=${ signature }`, 'ascii')
     console.log('headers', req.headers)
-    console.log('sign', req.headers['X-Hub-Signature-256'])
-    const untrusted = Buffer.from(req.headers['X-Hub-Signature-256'], 'ascii')
+    console.log('sign', req.headers['x-hub-signature-256'])
+    const untrusted = Buffer.from(req.headers['x-hub-signature-256'], 'ascii')
     return crypto.timingSafeEqual(trusted, untrusted)
 }
 
