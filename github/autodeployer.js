@@ -68,7 +68,8 @@ const verifySignature = (req, secret) => {
                         })
                     }
                     // tmux new-session -d -s caamillo_it 'cd /home/caamillo/htdocs/caamillo.it && chmod +x ./deploy.sh && ./deploy.sh'
-                    tmuxSessions[cachedRoute.handler] = spawn('tmux', [ 'new-session', '-d', '-s', tmuxName, `cd ${ cachedRoute.path } && chmod +x ./deploy.sh && ./deploy.sh` ])
+                    tmuxSessions[cachedRoute.handler] = exec(`tmux new-session -d -s ${ tmuxName } 'cd ${ cachedRoute.path } && chmod +x ./deploy.sh && ./deploy.sh'`)
+                    console.log(`tmux new-session -d -s ${ tmuxName } 'cd ${ cachedRoute.path } && chmod +x ./deploy.sh && ./deploy.sh'`)
 
                     tmuxSessions[cachedRoute.handler].stdout.on('data', (data) => {
                         console.log(`stdout: ${ data }`)
