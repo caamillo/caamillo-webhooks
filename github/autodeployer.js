@@ -61,7 +61,7 @@ const verifySignature = (req, secret) => {
                     if (err) throw err
                     if (stderr) throw stderr
                 })
-                exec(`ls -la ${ cachedRoute.deploy }`, (err, stdout, stderr) => {
+                exec(`${ cachedRoute.deploy }`, (err, stdout, stderr) => {
                     if (err) throw err
                     if (stderr) throw stderr
                     console.log(stdout)
