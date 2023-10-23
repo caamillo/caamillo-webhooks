@@ -3,6 +3,9 @@
   "version": "1.0.0",
   "description": "caamillo-github-webhook",
   "main": "autodeployer.js",
+  "scripts": {
+    "start": "node autodeployer.js"
+  },
   "keywords": [],
   "author": "",
   "license": "ISC",
