@@ -56,30 +56,22 @@ const verifySignature = (req, secret) => {
                 res.status(202).send('Accepted')
 
                 const ghEvent = req.headers['x-github-event']
-                // if (ghEvent !== 'push') return [ DEBUG ]
-                console.log(`${ cachedRoute.name } - Push incoming...`)
-                if (cachedRoute.isServer) {
-                    const tmuxName = cachedRoute.name.replace('.', '_')
-                    exec(`tmux kill-session -t ${ tmuxName }`)
-                    // tmux new-session -d -s caamillo_it 'cd /home/caamillo/htdocs/caamillo.it && chmod +x ./deploy.sh && ./deploy.sh'
-                    tmuxSessions[cachedRoute.handler] = exec(`tmux new-session -d -s ${ tmuxName } 'cd ${ cachedRoute.path } && chmod +x ./deploy.sh && ./deploy.sh'`)
-                    console.log(`tmux new-session -d -s ${ tmuxName } 'cd ${ cachedRoute.path } && chmod +x ./deploy.sh && ./deploy.sh'`)
+                if (ghEvent !== 'push') return
+                console.log(`${ cachedRoute.name } - Deploying...`)
+                const tmuxName = cachedRoute.name.replace('.', '_')
+                exec(`tmux kill-session -t ${ tmuxName }`)
+                // tmux new-session -d -s caamillo_it 'cd /home/caamillo/htdocs/caamillo.it && chmod +x ./deploy.sh && ./deploy.sh'
+                tmuxSessions[cachedRoute.handler] = exec(`tmux new-session -d -s ${ tmuxName } 'cd ${ cachedRoute.path } && chmod +x ./deploy.sh && ./deploy.sh'`)
 
-                    tmuxSessions[cachedRoute.handler].stdout.on('data', (data) => {
-                        console.log(`stdout: ${ data }`)
-                    })
-                    tmuxSessions[cachedRoute.handler].stderr.on('data', (data) => {
-                        console.log(`stderr: ${ data }`)
-                    })
-                    tmuxSessions[cachedRoute.handler].on('close', (code) => {
-                        console.log(`tmux ${ cachedRoute.handler } process has been closed with code ${ code }`)
-                    })
-                }
-                /*exec(`cd ${ cachedRoute.path } && chmod +x ./deploy.sh && ./deploy.sh`, (err, stdout, stderr) => {
-                    if (err) throw err
-                    if (stderr) return console.error('stderr', stderr)
-                    console.log('stout', stdout)
-                })*/
+                tmuxSessions[cachedRoute.handler].stdout.on('data', (data) => {
+                    console.log(`stdout: ${ data }`)
+                })
+                tmuxSessions[cachedRoute.handler].stderr.on('data', (data) => {
+                    console.log(`stderr: ${ data }`)
+                })
+                tmuxSessions[cachedRoute.handler].on('close', (code) => {
+                    if (code !== 0) console.log(`tmux ${ cachedRoute.handler } process has been closed with code ${ code }`)
+                })
             })
         }
     } catch ({ message }) {
