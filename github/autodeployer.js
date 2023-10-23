@@ -2,8 +2,7 @@
 const fs = require('fs/promises')
 const express = require('express')
 const crypto = require('crypto')
-const { spawn } = require('node-pty')
-const { exec } = require("child_process")
+const { spawn, exec } = require("child_process")
 require('dotenv').config()
 
 const app = express()
@@ -68,8 +67,18 @@ const verifySignature = (req, secret) => {
                             console.log('stout', stdout)
                         })
                     }
-                    tmuxSessions[cachedRoute.handler] = spawn('tmux', [ 'new', '-s', tmuxName, '-d' ])
-                    tmuxSessions[cachedRoute.handler].write('echo Test')
+                    // tmux new-session -d -s caamillo_it 'cd /home/caamillo/htdocs/caamillo.it && chmod +x ./deploy.sh && ./deploy.sh'
+                    tmuxSessions[cachedRoute.handler] = spawn('tmux', [ 'new-session', '-d', '-s', tmuxName, `cd ${ cachedRoute.path } && chmod +x ./deploy.sh && ./deploy.sh` ])
+
+                    tmuxSessions[cachedRoute.handler].stdout.on('data', (data) => {
+                        console.log(`stdout: ${ data }`)
+                    })
+                    tmuxSessions[cachedRoute.handler].stderr.on('data', (data) => {
+                        console.log(`stderr: ${ data }`)
+                    })
+                    tmuxSessions[cachedRoute.handler].on('close', (code) => {
+                        console.log(`tmux ${ cachedRoute.handler } process has been closed with code ${ code }`)
+                    })
                 }
                 /*exec(`cd ${ cachedRoute.path } && chmod +x ./deploy.sh && ./deploy.sh`, (err, stdout, stderr) => {
                     if (err) throw err
