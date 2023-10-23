@@ -2,7 +2,7 @@
     {
         "name": "caamillo.it",
         "handler": "caamillo",
-        "deploy": "/home/caamillo/htdocs/caamillo.it/deploy.sh",
+        "path": "/home/caamillo/htdocs/caamillo.it",
         "website": "https://caamillo.it"
     }
 ]
