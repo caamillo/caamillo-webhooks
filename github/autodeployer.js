@@ -60,11 +60,11 @@ const verifySignature = (req, secret) => {
                 exec(`cd ${ cachedRoute.path }`, (err, stdout, stderr) => {
                     if (err) throw err
                     if (stderr) throw stderr
-                })
-                exec(`ls`, (err, stdout, stderr) => {
-                    if (err) throw err
-                    if (stderr) throw stderr
-                    console.log('ls', stdout)
+                    exec(`ls`, (err, stdout, stderr) => {
+                        if (err) throw err
+                        if (stderr) throw stderr
+                        console.log('ls', stdout)
+                    })
                 })
 
                 /*exec(`chmod +x ./deploy.sh`, (err, stdout, stderr) => {
