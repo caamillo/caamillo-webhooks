@@ -57,14 +57,10 @@ const verifySignature = (req, secret) => {
                 const ghEvent = req.headers['x-github-event']
                 // if (ghEvent !== 'push') return [ DEBUG ]
                 console.log(`${ cachedRoute.name } - Push incoming...`)
-                exec(`cd ${ cachedRoute.path }`, (err, stdout, stderr) => {
+                exec(`cd ${ cachedRoute.path } && ls`, (err, stdout, stderr) => {
                     if (err) throw err
                     if (stderr) throw stderr
-                    exec(`ls`, (err, stdout, stderr) => {
-                        if (err) throw err
-                        if (stderr) throw stderr
-                        console.log('ls', stdout)
-                    })
+                    console.log('ls', stdout)
                 })
 
                 /*exec(`chmod +x ./deploy.sh`, (err, stdout, stderr) => {
