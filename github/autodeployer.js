@@ -60,7 +60,7 @@ const verifySignature = (req, secret) => {
 
                 exec(`cd ${ cachedRoute.path } && chmod +x ./deploy.sh && ./deploy.sh`, (err, stdout, stderr) => {
                     if (err) throw err
-                    if (stderr) return console.error(stderr)
+                    if (stderr) return console.error('stderr', stderr)
                     console.log('stout', stdout)
                 })
             })
