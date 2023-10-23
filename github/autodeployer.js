@@ -25,7 +25,7 @@ const routeSecrets = {}
             }
             routeSecrets[route.handler] = deploySecret
             app.post(`/${ route.handler }`, express.json({ type: 'application/json' }), (req, res) => {
-                response.status(202).send('Accepted')
+                res.status(202).send('Accepted')
                 console.log(`${ route.name } - Request Accepted!`)
 
                 const ghEvent = request.headers['x-github-event']
