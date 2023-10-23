@@ -17,6 +17,8 @@ const verifySignature = (req, secret) => {
         .update(JSON.stringify(req.body))
         .digest('hex')
     const trusted = Buffer.from(`sha256=${ signature }`, 'ascii')
+    console.log('headers', req.headers)
+    console.log('sign', req.headers['X-Hub-Signature-256'])
     const untrusted = Buffer.from(req.headers['X-Hub-Signature-256'], 'ascii')
     return crypto.timingSafeEqual(trusted, untrusted)
 }
@@ -38,7 +40,6 @@ const verifySignature = (req, secret) => {
             app.post(`/${ route.handler }`, express.json({ type: 'application/json' }), (req, res) => {
 
                 // Verify signature
-                console.log('secret', routeSecrets[route.handler])
                 if (!verifySignature(req, routeSecrets[route.handler])) res.status(401).send('Not authorized')
 
                 res.status(202).send('Accepted')
