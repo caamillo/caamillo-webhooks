@@ -2,6 +2,7 @@
 const fs = require('fs/promises')
 const express = require('express')
 const crypto = require('crypto')
+const { exec } = require("child_process")
 require('dotenv').config()
 
 const app = express()
@@ -9,7 +10,7 @@ const app = express()
 app.set('view engine', 'ejs')
 
 let routes
-const routeSecrets = {}
+const cachedRoutes = {}
 
 const verifySignature = (req, secret) => {
     const signature = crypto
@@ -34,18 +35,37 @@ const verifySignature = (req, secret) => {
             if (!deploySecret) throw {
                 message: `WEBHOOK_SECRET not found in "${ route.name }" route`
             }
-            routeSecrets[route.handler] = deploySecret
+            cachedRoutes[route.handler] = {
+                ...route,
+                secret: deploySecret
+            }
             app.post(`/${ route.handler }`, express.json({ type: 'application/json' }), (req, res) => {
 
+                const cachedRoute = cachedRoutes[route.handler]
+                if (!cachedRoute) {
+                    res.send(500).send('Server Error searching for route')
+                    throw {
+                        message: `Route not found in "${ cachedRoute.name }" cache-route`
+                    }
+                }
+
                 // Verify signature
-                if (!verifySignature(req, routeSecrets[route.handler])) res.status(401).send('Not authorized')
+                if (!verifySignature(req, cachedRoute.secret)) res.status(401).send('Not authorized')
 
                 res.status(202).send('Accepted')
-                console.log(`${ route.name } - Request Accepted!`)
 
                 const ghEvent = req.headers['x-github-event']
                 if (ghEvent !== 'push') return
-                console.log('it was a push!')
+                console.log(`${ cachedRoute.name } - Push incoming...`)
+                exec(`chmod +x ${ cachedRoute.deploy }`, (err, stdout, stderr) => {
+                    if (err) throw err
+                    if (stderr) throw stderr
+                })
+                exec(`ls -la ${ cachedRoute.deploy }`, (err, stdout, stderr) => {
+                    if (err) throw err
+                    if (stderr) throw stderr
+                    console.log(stdout)
+                })
             })
         }
     } catch ({ message }) {
