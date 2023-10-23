@@ -59,18 +59,19 @@ const verifySignature = (req, secret) => {
                 if (ghEvent !== 'push') return
                 console.log(`${ cachedRoute.name } - Deploying...`)
                 const tmuxName = cachedRoute.name.replace('.', '_')
-                exec(`tmux kill-session -t ${ tmuxName }`)
-                // tmux new-session -d -s caamillo_it 'cd /home/caamillo/htdocs/caamillo.it && chmod +x ./deploy.sh && ./deploy.sh'
-                tmuxSessions[cachedRoute.handler] = exec(`tmux new-session -d -s ${ tmuxName } 'cd ${ cachedRoute.path } && chmod +x ./deploy.sh && ./deploy.sh'`)
-
-                tmuxSessions[cachedRoute.handler].stdout.on('data', (data) => {
-                    console.log(`stdout: ${ data }`)
-                })
-                tmuxSessions[cachedRoute.handler].stderr.on('data', (data) => {
-                    console.log(`stderr: ${ data }`)
-                })
-                tmuxSessions[cachedRoute.handler].on('close', (code) => {
-                    if (code !== 0) console.log(`tmux ${ cachedRoute.handler } process has been closed with code ${ code }`)
+                exec(`tmux kill-session -t ${ tmuxName }`, () => {
+                    // tmux new-session -d -s caamillo_it 'cd /home/caamillo/htdocs/caamillo.it && chmod +x ./deploy.sh && ./deploy.sh'
+                    tmuxSessions[cachedRoute.handler] = exec(`tmux new-session -d -s ${ tmuxName } 'cd ${ cachedRoute.path } && chmod +x ./deploy.sh && ./deploy.sh'`)
+    
+                    tmuxSessions[cachedRoute.handler].stdout.on('data', (data) => {
+                        console.log(`stdout: ${ data }`)
+                    })
+                    tmuxSessions[cachedRoute.handler].stderr.on('data', (data) => {
+                        console.log(`stderr: ${ data }`)
+                    })
+                    tmuxSessions[cachedRoute.handler].on('close', (code) => {
+                        if (code !== 0) console.log(`tmux ${ cachedRoute.handler } process has been closed with code ${ code }`)
+                    })
                 })
             })
         }
