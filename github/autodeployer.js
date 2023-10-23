@@ -29,7 +29,7 @@ const routeSecrets = {}
                 console.log(`${ route.name } - Request Accepted!`)
 
                 const ghEvent = req.headers['x-github-event']
-                console.log(ghEvent)
+                console.log(req.headers)
                 if (ghEvent !== 'push') return
                 console.log('it was a push!')
             })
