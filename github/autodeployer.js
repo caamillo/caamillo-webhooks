@@ -1,6 +1,7 @@
 // Deps
 const fs = require('fs/promises')
 const express = require('express')
+const crypto = require('crypto')
 require('dotenv').config()
 
 const app = express()
@@ -9,6 +10,16 @@ app.set('view engine', 'ejs')
 
 let routes
 const routeSecrets = {}
+
+const verifySignature = (req, secret) => {
+    const signature = crypto
+        .createHmac('sha256', secret)
+        .update(JSON.stringify(req.body))
+        .digest('hex')
+    const trusted = Buffer.from(`sha256=${ signature }`, 'ascii')
+    const untrusted = Buffer.from(req.headers.get("x-hub-signature-256"), 'ascii')
+    return crypto.timingSafeEqual(trusted, untrusted)
+}
 
 ;(async () => {
     try {
@@ -25,6 +36,11 @@ const routeSecrets = {}
             }
             routeSecrets[route.handler] = deploySecret
             app.post(`/${ route.handler }`, express.json({ type: 'application/json' }), (req, res) => {
+
+                // Verify signature
+                console.log('secret', routeSecrets[route.handler])
+                if (!verifySignature(req, routeSecrets[route.handler])) res.status(401).send('Not authorized')
+
                 res.status(202).send('Accepted')
                 console.log(`${ route.name } - Request Accepted!`)
 
