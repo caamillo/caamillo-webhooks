@@ -2,7 +2,7 @@
 const fs = require('fs/promises')
 const express = require('express')
 const crypto = require('crypto')
-const { spawn, exec } = require("child_process")
+const { exec } = require("child_process")
 require('dotenv').config()
 
 const app = express()
