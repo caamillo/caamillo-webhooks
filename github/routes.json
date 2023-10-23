@@ -3,6 +3,7 @@
         "name": "caamillo.it",
         "handler": "caamillo",
         "path": "/home/caamillo/htdocs/caamillo.it",
-        "website": "https://caamillo.it"
+        "website": "https://caamillo.it",
+        "isServer": true
     }
 ]

@@ -2,6 +2,7 @@
 const fs = require('fs/promises')
 const express = require('express')
 const crypto = require('crypto')
+const { spawn } = require('node-pty')
 const { exec } = require("child_process")
 require('dotenv').config()
 
@@ -11,6 +12,7 @@ app.set('view engine', 'ejs')
 
 let routes
 const cachedRoutes = {}
+const tmuxSessions = {}
 
 const verifySignature = (req, secret) => {
     const signature = crypto
@@ -57,12 +59,23 @@ const verifySignature = (req, secret) => {
                 const ghEvent = req.headers['x-github-event']
                 // if (ghEvent !== 'push') return [ DEBUG ]
                 console.log(`${ cachedRoute.name } - Push incoming...`)
-
-                exec(`cd ${ cachedRoute.path } && chmod +x ./deploy.sh && ./deploy.sh`, (err, stdout, stderr) => {
+                if (cachedRoute.isServer) {
+                    const tmuxName = cachedRoute.name.replace('.', '_')
+                    if (tmuxSessions[cachedRoute.handler]) {
+                        exec(`tmux kill-session -t ${ tmuxName }`, (err, stdout, stderr) => {
+                            if (err) throw err
+                            if (stderr) return console.error('stderr', stderr)
+                            console.log('stout', stdout)
+                        })
+                    }
+                    tmuxSessions[cachedRoute.handler] = spawn('tmux', [ 'new', '-s', tmuxName, '-d' ])
+                    tmuxSessions[cachedRoute.handler].write('echo Test')
+                }
+                /*exec(`cd ${ cachedRoute.path } && chmod +x ./deploy.sh && ./deploy.sh`, (err, stdout, stderr) => {
                     if (err) throw err
                     if (stderr) return console.error('stderr', stderr)
                     console.log('stout', stdout)
-                })
+                })*/
             })
         }
     } catch ({ message }) {
