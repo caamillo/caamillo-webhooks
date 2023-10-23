@@ -17,8 +17,6 @@ const verifySignature = (req, secret) => {
         .update(JSON.stringify(req.body))
         .digest('hex')
     const trusted = Buffer.from(`sha256=${ signature }`, 'ascii')
-    console.log('headers', req.headers)
-    console.log('sign', req.headers['x-hub-signature-256'])
     const untrusted = Buffer.from(req.headers['x-hub-signature-256'], 'ascii')
     return crypto.timingSafeEqual(trusted, untrusted)
 }
@@ -46,7 +44,6 @@ const verifySignature = (req, secret) => {
                 console.log(`${ route.name } - Request Accepted!`)
 
                 const ghEvent = req.headers['x-github-event']
-                console.log(req.headers)
                 if (ghEvent !== 'push') return
                 console.log('it was a push!')
             })
