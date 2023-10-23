@@ -60,14 +60,7 @@ const verifySignature = (req, secret) => {
                 console.log(`${ cachedRoute.name } - Push incoming...`)
                 if (cachedRoute.isServer) {
                     const tmuxName = cachedRoute.name.replace('.', '_')
-                    console.log(tmuxSessions[cachedRoute.handler])
-                    if ('does session exists?', tmuxSessions[cachedRoute.handler]) {
-                        exec(`tmux kill-session -t ${ tmuxName }`, (err, stdout, stderr) => {
-                            if (err) throw err
-                            if (stderr) return console.error('stderr', stderr)
-                            console.log('stout', stdout)
-                        })
-                    }
+                    exec(`tmux kill-session -t ${ tmuxName }`)
                     // tmux new-session -d -s caamillo_it 'cd /home/caamillo/htdocs/caamillo.it && chmod +x ./deploy.sh && ./deploy.sh'
                     tmuxSessions[cachedRoute.handler] = exec(`tmux new-session -d -s ${ tmuxName } 'cd ${ cachedRoute.path } && chmod +x ./deploy.sh && ./deploy.sh'`)
                     console.log(`tmux new-session -d -s ${ tmuxName } 'cd ${ cachedRoute.path } && chmod +x ./deploy.sh && ./deploy.sh'`)
