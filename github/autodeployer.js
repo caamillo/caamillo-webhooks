@@ -28,7 +28,7 @@ const routeSecrets = {}
                 res.status(202).send('Accepted')
                 console.log(`${ route.name } - Request Accepted!`)
 
-                const ghEvent = request.headers['x-github-event']
+                const ghEvent = req.headers['x-github-event']
                 console.log(ghEvent)
                 if (ghEvent !== 'push') return
                 console.log('it was a push!')
