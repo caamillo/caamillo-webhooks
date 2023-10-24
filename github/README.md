@@ -6,7 +6,7 @@
 [
     {
         "name": "caamillo.it", // service name
-        "handler": "caamillo", // handler name (needs to be as same as .env secret-key, e.g. caamillo -> WEBHOOK_SECRET_CAAMILLO). It will be uppercase or lowercase makes no differences, it will be automatically uppercased
+        "handler": "caamillo", // handler name (needs to be as same as .env secret-key, e.g. caamillo -> WEBHOOK_SECRET_CAAMILLO). Uppercase or lowercase makes no differences, it will be automatically uppercased
         "path": "/home/caamillo/htdocs/caamillo.it", // path of the root to find service's deploy.sh
         "website": "https://caamillo.it" // optional
     }
