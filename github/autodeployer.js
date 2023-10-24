@@ -82,6 +82,10 @@ const verifySignature = (req, secret) => {
     app.get('/', (req, res) => {
         res.render('index')
     })
+
+    app.get('*', (req, res) => {
+        res.status(404).render('404')
+    })
 })()
 
 app.listen(5001, () => console.log('Github Autodeployer listening at http://localhost:5001/'))
