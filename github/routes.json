@@ -4,5 +4,11 @@
         "handler": "caamillo",
         "path": "/home/caamillo/htdocs/caamillo.it",
         "website": "https://caamillo.it"
+    },
+    {
+        "name": "api.caamillo.it",
+        "handler": "apicaamillo",
+        "path": "/home/api.caamillo.it",
+        "website": "https://api.caamillo.it"
     }
 ]
