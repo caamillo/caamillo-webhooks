@@ -57,7 +57,7 @@ const verifySignature = (req, secret) => {
 
                 const ghEvent = req.headers['x-github-event']
                 if (ghEvent !== 'push') return
-                console.log(`${ cachedRoute.name } - Deploying...`)
+                console.log(`[ ACTION ][ ${  new Date().toLocaleString().split(', ').join(' ') } ] ${ cachedRoute.name } - Deploying...`)
                 const tmuxName = cachedRoute.name.replace('.', '_')
                 exec(`tmux kill-session -t ${ tmuxName }`, () => {
                     // tmux new-session -d -s caamillo_it 'cd /home/caamillo/htdocs/caamillo.it && chmod +x ./deploy.sh && ./deploy.sh'
